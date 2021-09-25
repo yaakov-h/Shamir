@@ -26,6 +26,7 @@ namespace Shamir.Console
                 {
                     if (command.Name == args[0])
                     {
+                        command.Initialize(args[1..]);
                         return command;
                     }
                 }

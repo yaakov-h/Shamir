@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
@@ -15,7 +16,11 @@ namespace Shamir.Console
 
         public IImmutableStack<ICommandTree> Path { get; }
 
-        public ValueTask<int> ExecuteAsync()
+        public void Initialize(ReadOnlySpan<string> args)
+        {
+        }
+        
+        public ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider)
         {
             System.Console.Error.WriteLine(GetHelpText());
             return ValueTask.FromResult(1); // TODO: const

@@ -83,7 +83,9 @@ Commands:
 
             public string Name { get; }
             public string Description { get; }
-            public ValueTask<int> ExecuteAsync() => ValueTask.FromResult(0);
+
+            public void Initialize(ReadOnlySpan<string> args) { }
+            public ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider) => ValueTask.FromResult(0);
         }
     }
 }
