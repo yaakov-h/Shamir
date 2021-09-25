@@ -1,48 +1,20 @@
 using System;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CommandLine;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Shamir.Console
 {
-    public abstract class ParsedArgumentsCommand<TOptions> : ICommand
-    {
-        public abstract string Name { get; }
-        public abstract string Description { get; }
-        public ImmutableArray<string> Arguments { get; private set; }
-
-        public void Initialize(ReadOnlySpan<string> args)
-        {
-            var array = ImmutableArray.CreateBuilder<string>(args.Length);
-            foreach (var arg in args)
-            {
-                array.Add(arg);
-            }
-            Arguments = array.MoveToImmutable();
-        }
-
-        public async ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider)
-        {
-            using var parser = serviceProvider.GetRequiredService<Parser>();
-            var result = parser.ParseArguments<TOptions>(Arguments);
-            return await result.MapResult(
-                options => ExecuteAsync(serviceProvider, options),
-                errors => ValueTask.FromResult(1)
-            );
-        }
-
-        public abstract ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider, TOptions options);
-    }
-
     public class StorageLsOptions
     {
-        [Option("connection-string", Required = false)]
+        [Option("connection-string", Required = false, HelpText = "Azure Storage connection string for the Storage Account backing the CDN.")]
         public string? ConnectionString { get; set; }
 
-        [Value(0)]
-        public string? ContainerName { get; set; }
+        [Option('a', "all", HelpText = "List all blobs in the container")]
+        public bool EnumerateAll { get; set; }
+
+        [Value(0, MetaName = "Path", HelpText = "Path to enumerate, starting with the Azure Storage container name.")]
+        public string? Path { get; set; }
     }
 
     public sealed class StorageLsCommand : ParsedArgumentsCommand<StorageLsOptions>
@@ -55,23 +27,68 @@ namespace Shamir.Console
         {
             var connectionString = options.ConnectionString ?? Environment.GetEnvironmentVariable("AZURE_CONNECTION_STRING");
             
-            if (options.ContainerName is null)
+            if (options.Path is null)
             {
-                var client = new BlobServiceClient(connectionString);
-                await foreach (var container in client.GetBlobContainersAsync())
+                if (options.EnumerateAll)
                 {
-                    System.Console.WriteLine(container.Name);
+                    var client = new BlobServiceClient(connectionString);
+                    await foreach (var container in client.GetBlobContainersAsync())
+                    {
+                        var containerClient = new BlobContainerClient(connectionString, container.Name);
+
+                        await foreach (var blob in containerClient.GetBlobsAsync())
+                        {
+                            System.Console.Write(container.Name);
+                            System.Console.Write('/');
+                            System.Console.WriteLine(blob.Name);
+                        }
+                    }
+                }
+                else
+                {
+                    var client = new BlobServiceClient(connectionString);
+                    await foreach (var container in client.GetBlobContainersAsync())
+                    {
+                        System.Console.WriteLine(container.Name);
+                    }
+                }
+            }
+            else if (options.EnumerateAll)
+            {
+                var containerName = options.Path;
+                var client = new BlobContainerClient(connectionString, containerName);
+
+                await foreach (var blob in client.GetBlobsAsync())
+                {
+                    System.Console.Write(containerName);
+                    System.Console.Write('/');
+                    System.Console.WriteLine(blob.Name);
                 }
             }
             else
             {
-                var client = new BlobContainerClient(connectionString, options.ContainerName);
+                var delimiterIndex = options.Path.IndexOf('/');
+                var containerName = delimiterIndex > 0 ? options.Path[..delimiterIndex] : options.Path;
+                var client = new BlobContainerClient(connectionString, containerName);
 
-                await foreach (var blob in client.GetBlobsAsync())
+                var prefix = delimiterIndex > 0 ? options.Path[(delimiterIndex + 1)..] : string.Empty;
+                await foreach (var blob in client.GetBlobsByHierarchyAsync(default, default, delimiter: "/", prefix))
                 {
-                    System.Console.Write(options.ContainerName);
+                    System.Console.Write(containerName);
                     System.Console.Write('/');
-                    System.Console.WriteLine(blob.Name);
+
+                    if (blob.IsPrefix)
+                    {
+                        System.Console.WriteLine(blob.Prefix);
+                    }
+                    else if (blob.IsBlob)
+                    {
+                        System.Console.WriteLine(blob.Blob.Name);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException("Unknown result - neither a blob nor a prefix (folder).");
+                    }
                 }
             }
 

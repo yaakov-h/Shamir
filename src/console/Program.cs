@@ -10,7 +10,13 @@ namespace Shamir.Console
         public static async Task<int> Main(string[] args)
         {
             await using var serviceProvider = new ServiceCollection()
-                .AddTransient<Parser>(sp => new Parser(with => with.EnableDashDash = true))
+                .AddTransient<Parser>(sp => new Parser(with =>
+                {
+                    with.AutoHelp = true;
+                    with.AutoVersion = true;
+                    with.EnableDashDash = true;
+                    with.IgnoreUnknownArguments = false;
+                }))
                 .BuildServiceProvider();
 
             var tree = new DefaultCommandTree(
