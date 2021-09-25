@@ -31,4 +31,4 @@ jobs:
         dotnet-version: ${{ matrix.sdk }}
 
     - name: Build Solution
-      run: dotnet build -c ${{ matrix.configuration }} src/shamir.sln
+      run: dotnet build -c ${{ matrix.configuration }} shamir.sln
