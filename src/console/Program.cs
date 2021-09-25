@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using CommandLine;
 using CommandLine.Text;
+using SysConsole = System.Console;
 
 namespace Shamir.Console
 {
@@ -56,7 +57,7 @@ namespace Shamir.Console
 
             public ValueTask<int> ExecuteAsync()
             {
-                Console.WriteLine($"Executing: cdn-ls");
+                SysConsole.WriteLine($"Executing: cdn-ls");
                 return ValueTask.FromResult(0);
             }
         }
@@ -69,7 +70,7 @@ namespace Shamir.Console
             
             public ValueTask<int> ExecuteAsync()
             {
-                Console.WriteLine($"Executing: cdn-add");
+                SysConsole.WriteLine($"Executing: cdn-add");
                 return ValueTask.FromResult(0);
             }
         }
@@ -82,7 +83,7 @@ namespace Shamir.Console
             
             public ValueTask<int> ExecuteAsync()
             {
-                Console.WriteLine($"Executing: cdn-mv");
+                SysConsole.WriteLine($"Executing: cdn-mv");
                 return ValueTask.FromResult(0);
             }
         }
@@ -100,7 +101,7 @@ namespace Shamir.Console
             public ValueTask<int> ExecuteAsync()
             {
                 var helpText = HelpText.AutoBuild(result);
-                Console.Error.WriteLine(helpText);
+                SysConsole.Error.WriteLine(helpText);
                 return ValueTask.FromResult(1);
             }
         }
