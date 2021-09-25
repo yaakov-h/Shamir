@@ -68,10 +68,11 @@ namespace Shamir.Console
             else
             {
                 var delimiterIndex = options.Path.IndexOf('/');
-                var containerName = delimiterIndex > 0 ? options.Path[..delimiterIndex] : options.Path;
-                var client = new BlobContainerClient(connectionString, containerName);
+                var (containerName, prefix) = delimiterIndex > 0
+                    ? (options.Path[..delimiterIndex], options.Path[(delimiterIndex + 1)..])
+                    : (options.Path, string.Empty);
 
-                var prefix = delimiterIndex > 0 ? options.Path[(delimiterIndex + 1)..] : string.Empty;
+                var client = new BlobContainerClient(connectionString, containerName);
                 await foreach (var blob in client.GetBlobsByHierarchyAsync(default, default, delimiter: "/", prefix))
                 {
                     System.Console.Write(containerName);
