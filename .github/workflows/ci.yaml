@@ -17,6 +17,8 @@ jobs:
         configuration:
         - debug
         - release
+        sdk:
+        - 5.0.x
 
     runs-on: ${{ matrix.os }}
 
@@ -25,6 +27,8 @@ jobs:
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v1.8.2
+      with:
+        dotnet-version: ${{ matrix.sdk }}
 
     - name: Build Solution
       run: dotnet build -c ${{ matrix.configuration }} src/shamir.sln
