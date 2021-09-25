@@ -62,8 +62,8 @@ Group
 
 Commands:
     one : bar/1 command
-    two : bar/1 command
-"));
+    two : bar/2 command
+".TrimStart()));
         }
 
         [TestCase((object)new string[] { "foo" }, ExpectedResult = "foo command")]
@@ -71,7 +71,7 @@ Commands:
         [TestCase((object)new string[] { "bar", "two" }, ExpectedResult = "bar/2 command")]
         public string FindsCommand(string[] args)
         {
-            var command = tree.FindCommand(args);
+            var command = tree.FindCommand(ImmutableStack<ICommandTree>.Empty, args);
             return command?.Description;
         }
 
@@ -110,7 +110,7 @@ Commands:
     {
         ImmutableArray<ICommandTree> SubTrees { get; }
         ImmutableArray<ICommand> Commands { get; }
-        ICommand FindCommand(ReadOnlySpan<string> args);
+        ICommand FindCommand(IImmutableStack<ICommandTree> path, ReadOnlySpan<string> args);
     }
 
     class DefaultCommandTree : ICommandTree
@@ -128,7 +128,7 @@ Commands:
         public ImmutableArray<ICommandTree> SubTrees { get; }
         public ImmutableArray<ICommand> Commands { get; }
 
-        public ICommand FindCommand(ReadOnlySpan<string> args)
+        public ICommand FindCommand(IImmutableStack<ICommandTree> path, ReadOnlySpan<string> args)
         {
             if (args.Length > 0)
             {
@@ -144,26 +144,26 @@ Commands:
                 {
                     if (tree.Name == args[0])
                     {
-                        return tree.FindCommand(args[1..]);
+                        return tree.FindCommand(path.Push(this), args[1..]);
                     }
                 }
             }
 
-            return new DefaultHelpTextCommand(this);
+            return new DefaultHelpTextCommand(path.Push(this));
         }
     }
 
     class DefaultHelpTextCommand : ICommand
     {
-        public DefaultHelpTextCommand(ICommandTree tree)
+        public DefaultHelpTextCommand(IImmutableStack<ICommandTree> path)
         {
-            this.CommandTree = tree ?? throw new ArgumentNullException(nameof(tree));
+            this.Path = path;
         }
 
         public string Name => "help";
         public string Description => "Print help text";
 
-        public ICommandTree CommandTree { get; }
+        public IImmutableStack<ICommandTree> Path { get; }
 
         public ValueTask<int> ExecuteAsync()
         {
@@ -171,17 +171,38 @@ Commands:
             return ValueTask.FromResult(1); // TODO: const
         }
 
-        public string GetHelpText() => CommandTree.BuildHelpText();
+        public string GetHelpText() => CommandTreeExtensions.BuildHelpText(Path);
     }
 
-    static class ICommandTreeExtensions
+    static class CommandTreeExtensions
     {
-        public static string BuildHelpText(this ICommandTree tree)
+        public static ICommand? FindCommand(this ICommandTree tree, ReadOnlySpan<string> args)
+        {
+            if (tree is null)
+            {
+                throw new ArgumentNullException(nameof(tree));
+            }
+
+            return tree.FindCommand(ImmutableStack<ICommandTree>.Empty, args);
+        }
+
+        public static string BuildHelpText(IImmutableStack<ICommandTree> path)
         {
             var sb = new StringBuilder();
             sb.AppendLine("Group");
             sb.Append("    ");
-            sb.AppendLine(tree.Name);
+
+            var pathNodes = path.ToArray();
+            for (var i = pathNodes.Length - 1; i > 0; i--)
+            {
+                sb.Append(pathNodes[i].Name);
+                sb.Append(' ');
+            }
+
+            var tree = pathNodes[0];
+            sb.Append(tree.Name);
+            sb.Append(" : ");
+            sb.AppendLine(tree.Description);
             sb.AppendLine();
 
             if (!tree.SubTrees.IsEmpty)
@@ -194,13 +215,15 @@ Commands:
                 {
                     sb.Append("    ");
                     sb.Append(child.Name);
-                    for (var i = 0; i < maxSpacing; i++)
+                    for (var i = 0; i < maxSpacing - child.Name.Length; i++)
                     {
                         sb.Append(' ');
                     }
                     sb.Append(": ");
                     sb.AppendLine(child.Description);
                 }
+
+                sb.AppendLine();
             }
 
             if (!tree.Commands.IsEmpty)
@@ -213,7 +236,7 @@ Commands:
                 {
                     sb.Append("    ");
                     sb.Append(command.Name);
-                    for (var i = 0; i < maxSpacing; i++)
+                    for (var i = 0; i < maxSpacing - command.Name.Length; i++)
                     {
                         sb.Append(' ');
                     }
