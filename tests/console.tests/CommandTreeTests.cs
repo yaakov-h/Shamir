@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace console.tests
+namespace Shamir.Console.Tests
 {
     public class Tests
     {

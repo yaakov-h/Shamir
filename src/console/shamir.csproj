@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Shamir</RootNamespace>
+    <RootNamespace>Shamir.Console</RootNamespace>
     <OutputPath>..\..\bin</OutputPath>
     <Nullable>enable</Nullable>
   </PropertyGroup>

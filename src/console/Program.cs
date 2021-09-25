@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CommandLine;
 using CommandLine.Text;
 
-namespace Shamir
+namespace Shamir.Console
 {
     public class CdnOperations : ICommandSet
     {
