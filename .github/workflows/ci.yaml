@@ -32,3 +32,6 @@ jobs:
 
     - name: Build Solution
       run: dotnet build -c ${{ matrix.configuration }} shamir.sln
+
+    - name: Run Tests
+      run: dotnet test -c ${{ matrix.configuration }} shamir.sln
