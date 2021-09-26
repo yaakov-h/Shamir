@@ -28,7 +28,8 @@ namespace Shamir.Console
                         "Browse and add new data to a CDN backed by Azure Storage",
                         ImmutableArray<ICommandTree>.Empty,
                         ImmutableArray.Create<ICommand>(
-                            new StorageLsCommand()
+                            new StorageLsCommand(),
+                            new StorageCopyCommand()
                         ))
                 ),
                 ImmutableArray<ICommand>.Empty
