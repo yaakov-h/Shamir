@@ -13,10 +13,10 @@ namespace Shamir.Console
         [Option("connection-string", Required = false, HelpText = "Azure Storage connection string for the Storage Account backing the CDN.")]
         public string? ConnectionString { get; set; }
 
-        [Value(0, Required = true, MetaName = "LocalPath", HelpText = "The local path to the file to copy.")]
+        [Value(0, Required = true, MetaName = "local path", HelpText = "The local path to the file to copy.")]
         public string? LocalPath { get; set; }
 
-        [Value(1, Required = true, MetaName = "RemotePath", HelpText = "The destination path in Azure Storage.")]
+        [Value(1, Required = true, MetaName = "remote path", HelpText = "The destination path in Azure Storage.")]
         public string? RemotePath { get; set; }
     }
 

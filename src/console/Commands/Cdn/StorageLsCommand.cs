@@ -13,7 +13,7 @@ namespace Shamir.Console
         [Option('a', "all", HelpText = "List all blobs in the container")]
         public bool EnumerateAll { get; set; }
 
-        [Value(0, MetaName = "Path", HelpText = "Path to enumerate, starting with the Azure Storage container name.")]
+        [Value(0, MetaName = "path", HelpText = "Path to enumerate, starting with the Azure Storage container name.")]
         public string? Path { get; set; }
     }
 
