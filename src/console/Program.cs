@@ -30,7 +30,7 @@ namespace Shamir.Console
                         ImmutableArray.Create<ICommand>(
                             new StorageLsCommand(),
                             new StorageCopyCommand(),
-                            new StorageSasCommand()
+                            new StorageGetUrlCommand()
                         ))
                 ),
                 ImmutableArray<ICommand>.Empty

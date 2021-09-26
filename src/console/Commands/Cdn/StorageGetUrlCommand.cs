@@ -3,13 +3,14 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using CommandLine;
 using Microsoft.Azure.Storage;
 
 namespace Shamir.Console
 {
-    public class StorageSasOptions
+    public class StorageGetUrlOptions
     {
         [Option("connection-string", Required = false, HelpText = "Azure Storage connection string for the Storage Account backing the CDN.")]
         public string? ConnectionString { get; set; }
@@ -24,13 +25,13 @@ namespace Shamir.Console
         public string? Path { get; set; }
     }
 
-    public sealed class StorageSasCommand : ParsedArgumentsCommand<StorageSasOptions>
+    public sealed class StorageGetUrlCommand : ParsedArgumentsCommand<StorageGetUrlOptions>
     {
-        public override string Name => "sas";
+        public override string Name => "get-url";
 
-        public override string Description => "Generate a SAS token for a file in Storage.";
+        public override string Description => "Get the URL for a file in Storage, with a SAS token if required.";
 
-        public override ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider, StorageSasOptions options)
+        public override async ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider, StorageGetUrlOptions options)
         {
             var connectionString = options.ConnectionString ?? Environment.GetEnvironmentVariable("AZURE_CONNECTION_STRING");
             var account = CloudStorageAccount.Parse(connectionString);
@@ -42,27 +43,32 @@ namespace Shamir.Console
                 ? (options.Path[..delimiterIndex], options.Path[(delimiterIndex + 1)..])
                 : (options.Path, string.Empty);
 
-            var client = new BlobServiceClient(connectionString);
-
-            var builder = new BlobSasBuilder(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddDays(options.ValidityPeriodDays));
-            builder.BlobContainerName = containerName;
-            builder.BlobName = path;
-            builder.Protocol = SasProtocol.Https;
-            builder.Resource = "b";
-
-            var key = new StorageSharedKeyCredential(account.Credentials.AccountName, account.Credentials.ExportBase64EncodedKey());
-            var parameters = builder.ToSasQueryParameters(key);
             var uri = new UriBuilder
             {
                 Scheme = "https",
                 Host = options.HostName ?? account.BlobStorageUri.PrimaryUri.Host,
                 Path = options.Path,
-                Query = parameters.ToString(),
             };
+
+            var client = new BlobServiceClient(connectionString);
+            var containerPolicy = await client.GetBlobContainerClient(containerName).GetAccessPolicyAsync();
+            if (containerPolicy.Value.BlobPublicAccess == PublicAccessType.None)
+            {
+                var builder = new BlobSasBuilder(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddDays(options.ValidityPeriodDays));
+                builder.BlobContainerName = containerName;
+                builder.BlobName = path;
+                builder.Protocol = SasProtocol.Https;
+                builder.Resource = "b";
+
+                var key = new StorageSharedKeyCredential(account.Credentials.AccountName, account.Credentials.ExportBase64EncodedKey());
+                var parameters = builder.ToSasQueryParameters(key);
+            
+                uri.Query = parameters.ToString();
+            }
 
             System.Console.WriteLine(uri.Uri.AbsoluteUri);
 
-            return ValueTask.FromResult(0);
+            return 0;
         }
     }
 }
