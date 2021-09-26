@@ -29,7 +29,8 @@ namespace Shamir.Console
                         ImmutableArray<ICommandTree>.Empty,
                         ImmutableArray.Create<ICommand>(
                             new StorageLsCommand(),
-                            new StorageCopyCommand()
+                            new StorageCopyCommand(),
+                            new StorageSasCommand()
                         ))
                 ),
                 ImmutableArray<ICommand>.Empty
