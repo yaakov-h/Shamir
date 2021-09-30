@@ -31,6 +31,13 @@ namespace Shamir.Console
                             new StorageLsCommand(),
                             new StorageCopyCommand(),
                             new StorageGetUrlCommand()
+                        )),
+                    new DefaultCommandTree(
+                        "vk",
+                        "Australian Amateur Radio commands",
+                        ImmutableArray<ICommandTree>.Empty,
+                        ImmutableArray.Create<ICommand>(
+                            new VKLookupCommand()
                         ))
                 ),
                 ImmutableArray<ICommand>.Empty
