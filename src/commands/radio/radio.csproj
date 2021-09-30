@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Shamir.Commands.Radio</RootNamespace>
+    <AssemblyName>Shamir.Commands.Radio</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\abstractions\abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

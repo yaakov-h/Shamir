@@ -15,4 +15,11 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\abstractions\abstractions.csproj" />
+    <ProjectReference Include="..\commands\azure\azure.csproj" />
+    <ProjectReference Include="..\commands\radio\radio.csproj" />
+    <ProjectReference Include="..\commands\steam\steam.csproj" />
+  </ItemGroup>
+
 </Project>
