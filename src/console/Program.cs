@@ -23,6 +23,7 @@ namespace Shamir.Console
                 }))
                 .AddAzureCommandTree()
                 .AddRadioCommandTree()
+                .AddSteamCommandTree()
                 .BuildServiceProvider();
 
             using var scope = serviceProvider.CreateScope();

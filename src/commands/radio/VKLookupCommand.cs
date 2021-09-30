@@ -35,7 +35,7 @@ namespace Shamir.Commands.Radio
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                System.Console.WriteLine($"{options.Callsign}: No such callsign found.");
+                Console.WriteLine($"{options.Callsign}: No such callsign found.");
                 return 1;
             }
 
@@ -46,32 +46,32 @@ namespace Shamir.Commands.Radio
 
             if (json.RootElement.TryGetProperty("callsign", out var callsign))
             {
-                System.Console.Write("Callsign : ");
-                System.Console.WriteLine(callsign.GetString());
+                Console.Write("Callsign : ");
+                Console.WriteLine(callsign.GetString());
             }
 
             if (json.RootElement.TryGetProperty("name", out var name))
             {
-                System.Console.Write("Name     : ");
-                System.Console.WriteLine(name.GetString());
+                Console.Write("Name     : ");
+                Console.WriteLine(name.GetString());
             }
 
             if (json.RootElement.TryGetProperty("suburb", out var suburb))
             {
-                System.Console.Write("Suburb   : ");
-                System.Console.WriteLine(suburb.GetString());
+                Console.Write("Suburb   : ");
+                Console.WriteLine(suburb.GetString());
             }
 
             if (json.RootElement.TryGetProperty("state", out var state))
             {
-                System.Console.Write("State    : ");
-                System.Console.WriteLine(state.GetString());
+                Console.Write("State    : ");
+                Console.WriteLine(state.GetString());
             }
 
             if (json.RootElement.TryGetProperty("link", out var link))
             {
-                System.Console.Write("Link     : ");
-                System.Console.WriteLine(link.GetString());
+                Console.Write("Link     : ");
+                Console.WriteLine(link.GetString());
             }
 
             return 0;

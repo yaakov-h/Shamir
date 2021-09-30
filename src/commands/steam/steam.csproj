@@ -4,10 +4,15 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Shamir.Commands.Steam</RootNamespace>
     <AssemblyName>Shamir.Commands.Steam</AssemblyName>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\abstractions\abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SteamKit2" Version="2.3.0" />
   </ItemGroup>
 
 </Project>

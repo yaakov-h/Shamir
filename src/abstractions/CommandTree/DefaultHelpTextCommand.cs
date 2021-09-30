@@ -22,7 +22,7 @@ namespace Shamir.Abstractions
         
         public ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider)
         {
-            System.Console.Error.WriteLine(GetHelpText());
+            Console.Error.WriteLine(GetHelpText());
             return ValueTask.FromResult(1); // TODO: const
         }
 
