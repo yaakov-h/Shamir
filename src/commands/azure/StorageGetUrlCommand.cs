@@ -7,10 +7,11 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using CommandLine;
 using Microsoft.Azure.Storage;
+using Shamir.Abstractions;
 
-namespace Shamir.Console
+namespace Shamir.Commands.Azure
 {
-    public class StorageGetUrlOptions
+    public sealed class StorageGetUrlOptions
     {
         [Option("connection-string", Required = false, HelpText = "Azure Storage connection string for the Storage Account backing the CDN.")]
         public string? ConnectionString { get; set; }
@@ -66,7 +67,7 @@ namespace Shamir.Console
                 uri.Query = parameters.ToString();
             }
 
-            System.Console.WriteLine(uri.Uri.AbsoluteUri);
+            Console.WriteLine(uri.Uri.AbsoluteUri);
 
             return 0;
         }

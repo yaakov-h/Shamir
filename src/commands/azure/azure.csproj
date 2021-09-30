@@ -4,7 +4,13 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Shamir.Commands.Azure</RootNamespace>
     <AssemblyName>Shamir.Commands.Azure</AssemblyName>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
+    <PackageReference Include="Microsoft.Azure.Storage.Common" Version="11.2.3" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\abstractions\abstractions.csproj" />

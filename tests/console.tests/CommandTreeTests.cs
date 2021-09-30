@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Shamir.Abstractions; // TODO: Restructure test project(s)
 
 namespace Shamir.Console.Tests
 {

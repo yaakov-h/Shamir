@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using CommandLine;
+using Shamir.Abstractions;
 
-namespace Shamir.Console
+namespace Shamir.Commands.Azure
 {
-    public class StorageCopyOptions
+    public sealed class StorageCopyOptions
     {
         [Option("connection-string", Required = false, HelpText = "Azure Storage connection string for the Storage Account backing the CDN.")]
         public string? ConnectionString { get; set; }
@@ -53,7 +54,7 @@ namespace Shamir.Console
             var client = new BlobContainerClient(connectionString, containerName);
             await client.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
-            using var blobStream = inputIsStdInputStream ? System.Console.OpenStandardInput() : File.OpenRead(options.LocalPath);
+            using var blobStream = inputIsStdInputStream ? Console.OpenStandardInput() : File.OpenRead(options.LocalPath);
             var response = await client.UploadBlobAsync(path, blobStream);
 
             return 0;

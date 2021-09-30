@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Shamir.Console
+namespace Shamir.Abstractions
 {
     public interface ICommand : IOperationsNode
     {

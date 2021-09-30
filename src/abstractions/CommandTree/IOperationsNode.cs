@@ -1,4 +1,4 @@
-namespace Shamir.Console
+namespace Shamir.Abstractions
 {
     public interface IOperationsNode
     {

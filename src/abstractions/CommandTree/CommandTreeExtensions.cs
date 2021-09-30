@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
-namespace Shamir.Console
+namespace Shamir.Abstractions
 {
     public static class CommandTreeExtensions
     {

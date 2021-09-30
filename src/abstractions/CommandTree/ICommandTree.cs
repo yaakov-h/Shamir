@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace Shamir.Console
+namespace Shamir.Abstractions
 {
     public interface ICommandTree : IOperationsNode
     {

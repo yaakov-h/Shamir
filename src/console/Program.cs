@@ -2,6 +2,9 @@
 using System.Threading.Tasks;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
+using Shamir.Abstractions;
+using Shamir.Commands.Azure;
+using Shamir.Commands.Radio;
 
 namespace Shamir.Console
 {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace Shamir.Console
+namespace Shamir.Abstractions
 {
     public sealed class DefaultHelpTextCommand : ICommand
     {

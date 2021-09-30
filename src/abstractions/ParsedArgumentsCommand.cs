@@ -5,7 +5,7 @@ using CommandLine;
 using CommandLine.Text;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Shamir.Console
+namespace Shamir.Abstractions
 {
     public abstract class ParsedArgumentsCommand<TOptions> : ICommand
     {
