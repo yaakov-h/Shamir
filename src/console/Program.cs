@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,8 +33,8 @@ namespace Shamir.Console
             var tree = new DefaultCommandTree(
                 "shamir",
                 "command-line multitool",
-                scope.ServiceProvider.GetServices<ICommandTree>().ToImmutableArray(),
-                scope.ServiceProvider.GetServices<ICommand>().ToImmutableArray()
+                scope.ServiceProvider.GetServices<ICommandTree>().OrderBy(x => x.Name).ToImmutableArray(),
+                scope.ServiceProvider.GetServices<ICommand>().OrderBy(x => x.Name).ToImmutableArray()
             );
 
             var command = tree.FindCommand(args);
