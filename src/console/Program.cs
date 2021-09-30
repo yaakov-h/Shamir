@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Shamir.Abstractions;
 using Shamir.Commands.Azure;
 using Shamir.Commands.Radio;
@@ -20,35 +21,21 @@ namespace Shamir.Console
                     with.EnableDashDash = true;
                     with.IgnoreUnknownArguments = false;
                 }))
+                .AddAzureCommandTree()
+                .AddRadioCommandTree()
                 .BuildServiceProvider();
+
+            using var scope = serviceProvider.CreateScope();
 
             var tree = new DefaultCommandTree(
                 "shamir",
                 "command-line multitool",
-                ImmutableArray.Create<ICommandTree>(
-                    new DefaultCommandTree(
-                        "cdn",
-                        "Browse and add new data to a CDN backed by Azure Storage",
-                        ImmutableArray<ICommandTree>.Empty,
-                        ImmutableArray.Create<ICommand>(
-                            new StorageLsCommand(),
-                            new StorageCopyCommand(),
-                            new StorageGetUrlCommand()
-                        )),
-                    new DefaultCommandTree(
-                        "vk",
-                        "Australian Amateur Radio commands",
-                        ImmutableArray<ICommandTree>.Empty,
-                        ImmutableArray.Create<ICommand>(
-                            new VKLookupCommand()
-                        ))
-                ),
-                ImmutableArray<ICommand>.Empty
+                scope.ServiceProvider.GetServices<ICommandTree>().ToImmutableArray(),
+                scope.ServiceProvider.GetServices<ICommand>().ToImmutableArray()
             );
 
             var command = tree.FindCommand(args);
 
-            using var scope = serviceProvider.CreateScope();
             return await command.ExecuteAsync(scope.ServiceProvider);
         }
     }
