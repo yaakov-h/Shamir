@@ -13,7 +13,8 @@ namespace Shamir.Commands.Radio
                 "Steam Network utilities",
                 ImmutableArray<ICommandTree>.Empty,
                 ImmutableArray.Create<ICommand>(
-                    new DescribeGidCommand()
+                    new DescribeGidCommand(),
+                    new DescribeEnumCommand()
                 )));
 
             return collection;
