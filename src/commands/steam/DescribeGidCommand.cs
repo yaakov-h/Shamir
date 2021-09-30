@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CommandLine;
+using Microsoft.Extensions.DependencyInjection;
 using Shamir.Abstractions;
 using SteamKit2;
 
@@ -22,10 +23,12 @@ namespace Shamir.Commands.Radio
         {
             var gid = new GlobalID(options.Gid);
 
-            Console.WriteLine($"Box ID             : {gid.BoxID}");
-            Console.WriteLine($"Process ID         : {gid.ProcessID}");
-            Console.WriteLine($"Process Start Time : {gid.StartTime}");
-            Console.WriteLine($"Sequence           : {gid.SequentialCount}");
+            var console = serviceProvider.GetRequiredService<IConsole>();
+
+            console.Output.WriteLine($"Box ID             : {gid.BoxID}");
+            console.Output.WriteLine($"Process ID         : {gid.ProcessID}");
+            console.Output.WriteLine($"Process Start Time : {gid.StartTime}");
+            console.Output.WriteLine($"Sequence           : {gid.SequentialCount}");
 
             return ValueTask.FromResult(0);
         }

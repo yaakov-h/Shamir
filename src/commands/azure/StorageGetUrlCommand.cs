@@ -7,6 +7,7 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using CommandLine;
 using Microsoft.Azure.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using Shamir.Abstractions;
 
 namespace Shamir.Commands.Azure
@@ -67,7 +68,7 @@ namespace Shamir.Commands.Azure
                 uri.Query = parameters.ToString();
             }
 
-            Console.WriteLine(uri.Uri.AbsoluteUri);
+            serviceProvider.GetRequiredService<IConsole>().Output.WriteLine(uri.Uri.AbsoluteUri);
 
             return 0;
         }

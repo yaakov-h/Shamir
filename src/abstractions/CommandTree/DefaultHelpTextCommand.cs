@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Shamir.Abstractions
 {
@@ -22,7 +23,7 @@ namespace Shamir.Abstractions
         
         public ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider)
         {
-            Console.Error.WriteLine(GetHelpText());
+            serviceProvider.GetRequiredService<IConsole>().Error.WriteLine(GetHelpText());
             return ValueTask.FromResult(1); // TODO: const
         }
 

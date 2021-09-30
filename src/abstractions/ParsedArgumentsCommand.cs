@@ -29,7 +29,7 @@ namespace Shamir.Abstractions
                     var helpText = HelpText.AutoBuild(result);   
                     helpText.Heading = string.Empty;
                     helpText.Copyright = string.Empty;
-                    Console.Error.WriteLine(helpText);
+                    serviceProvider.GetRequiredService<IConsole>().Error.WriteLine(helpText);
                     return ValueTask.FromResult(1);
                 }
             );

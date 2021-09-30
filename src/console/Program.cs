@@ -21,6 +21,7 @@ namespace Shamir.Console
                     with.EnableDashDash = true;
                     with.IgnoreUnknownArguments = false;
                 }))
+                .AddSingleton<IConsole, SystemConsole>()
                 .AddAzureCommandTree()
                 .AddRadioCommandTree()
                 .AddSteamCommandTree()

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CommandLine;
+using Microsoft.Extensions.DependencyInjection;
 using Shamir.Abstractions;
 
 namespace Shamir.Commands.Radio
@@ -25,6 +26,7 @@ namespace Shamir.Commands.Radio
         {
             Debug.Assert(options.Callsign != null, "Callsign should be populated.");
 
+            var console = serviceProvider.GetRequiredService<IConsole>();
             using var client = new HttpClient();
 
             // API courtesy of VK3FUR: https://vklookup.info
@@ -35,7 +37,7 @@ namespace Shamir.Commands.Radio
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                Console.WriteLine($"{options.Callsign}: No such callsign found.");
+                console.Error.WriteLine($"{options.Callsign}: No such callsign found.");
                 return 1;
             }
 
@@ -46,32 +48,32 @@ namespace Shamir.Commands.Radio
 
             if (json.RootElement.TryGetProperty("callsign", out var callsign))
             {
-                Console.Write("Callsign : ");
-                Console.WriteLine(callsign.GetString());
+                console.Output.Write("Callsign : ");
+                console.Output.WriteLine(callsign.GetString());
             }
 
             if (json.RootElement.TryGetProperty("name", out var name))
             {
-                Console.Write("Name     : ");
-                Console.WriteLine(name.GetString());
+                console.Output.Write("Name     : ");
+                console.Output.WriteLine(name.GetString());
             }
 
             if (json.RootElement.TryGetProperty("suburb", out var suburb))
             {
-                Console.Write("Suburb   : ");
-                Console.WriteLine(suburb.GetString());
+                console.Output.Write("Suburb   : ");
+                console.Output.WriteLine(suburb.GetString());
             }
 
             if (json.RootElement.TryGetProperty("state", out var state))
             {
-                Console.Write("State    : ");
-                Console.WriteLine(state.GetString());
+                console.Output.Write("State    : ");
+                console.Output.WriteLine(state.GetString());
             }
 
             if (json.RootElement.TryGetProperty("link", out var link))
             {
-                Console.Write("Link     : ");
-                Console.WriteLine(link.GetString());
+                console.Output.Write("Link     : ");
+                console.Output.WriteLine(link.GetString());
             }
 
             return 0;

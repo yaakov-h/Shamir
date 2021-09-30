@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using CommandLine;
+using Microsoft.Extensions.DependencyInjection;
 using Shamir.Abstractions;
 
 namespace Shamir.Commands.Azure
@@ -27,6 +28,7 @@ namespace Shamir.Commands.Azure
         public override async ValueTask<int> ExecuteAsync(IServiceProvider serviceProvider, StorageLsOptions options)
         {
             var connectionString = options.ConnectionString ?? Environment.GetEnvironmentVariable("AZURE_CONNECTION_STRING");
+            var console = serviceProvider.GetRequiredService<IConsole>();
             
             if (options.Path is null)
             {
@@ -39,9 +41,9 @@ namespace Shamir.Commands.Azure
 
                         await foreach (var blob in containerClient.GetBlobsAsync())
                         {
-                            Console.Write(container.Name);
-                            Console.Write('/');
-                            Console.WriteLine(blob.Name);
+                            console.Output.Write(container.Name);
+                            console.Output.Write('/');
+                            console.Output.WriteLine(blob.Name);
                         }
                     }
                 }
@@ -50,7 +52,7 @@ namespace Shamir.Commands.Azure
                     var client = new BlobServiceClient(connectionString);
                     await foreach (var container in client.GetBlobContainersAsync())
                     {
-                        Console.WriteLine(container.Name);
+                        console.Output.WriteLine(container.Name);
                     }
                 }
             }
@@ -61,9 +63,9 @@ namespace Shamir.Commands.Azure
 
                 await foreach (var blob in client.GetBlobsAsync())
                 {
-                    Console.Write(containerName);
-                    Console.Write('/');
-                    Console.WriteLine(blob.Name);
+                    console.Output.Write(containerName);
+                    console.Output.Write('/');
+                    console.Output.WriteLine(blob.Name);
                 }
             }
             else
@@ -76,16 +78,16 @@ namespace Shamir.Commands.Azure
                 var client = new BlobContainerClient(connectionString, containerName);
                 await foreach (var blob in client.GetBlobsByHierarchyAsync(default, default, delimiter: "/", prefix))
                 {
-                    Console.Write(containerName);
-                    Console.Write('/');
+                    console.Output.Write(containerName);
+                    console.Output.Write('/');
 
                     if (blob.IsPrefix)
                     {
-                        Console.WriteLine(blob.Prefix);
+                        console.Output.WriteLine(blob.Prefix);
                     }
                     else if (blob.IsBlob)
                     {
-                        Console.WriteLine(blob.Blob.Name);
+                        console.Output.WriteLine(blob.Blob.Name);
                     }
                     else
                     {
